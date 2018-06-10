@@ -15,6 +15,7 @@ from nucypher.crypto.constants import KECCAK_DIGEST_LENGTH
 from nucypher.crypto.powers import SigningPower
 from nucypher.crypto.signing import Signature
 from nucypher.crypto.splitters import key_splitter
+from umbral.config import default_params
 from umbral.pre import Capsule
 
 
@@ -346,7 +347,7 @@ class WorkOrder(object):
         payload_splitter = BytestringSplitter(Signature) + key_splitter
         signature, bob_pubkey_sig, (receipt_bytes, packed_capsules) = payload_splitter(rest_payload,
                                                                                        msgpack_remainder=True)
-        capsules = [Capsule.from_bytes(p) for p in msgpack.loads(packed_capsules)]
+        capsules = [Capsule.from_bytes(p, params=default_params()) for p in msgpack.loads(packed_capsules)]
         verified = signature.verify(receipt_bytes, bob_pubkey_sig)
         if not verified:
             raise ValueError("This doesn't appear to be from Bob.")
