@@ -6,12 +6,12 @@ workflows:
     jobs:
       - build_dependencies-35
       - build_dependencies-36
-      - nucypher_tests-35:
-          requires:
-            - build_dependencies-35
-      - nucypher_tests-36:
+      - contract_unit_tests-36:
           requires:
             - build_dependencies-36
+      - intercontract_integration_tests:
+          requires:
+            - contract_unit_tests-36
 
 build_dependencies: &build_dependencies
   steps:
@@ -48,19 +48,7 @@ jobs:
     docker:
       - image: circleci/python:3.6
 
-  nucypher_tests-35:
-    working_directory: ~/nucypher-depends-35
-    docker:
-      - image: circleci/python:3.5
-    steps:
-      - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}
-      - run:
-          name: Run The Tests
-          command: pipenv run pytest --cov=nucypher -v
-
-  nucypher_tests-36:
+  contract_unit_tests-36:
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
@@ -69,5 +57,20 @@ jobs:
       - restore_cache:
           key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}
       - run:
-          name: Run The Tests
-          command: pipenv run pytest --cov=nucypher -v
+          name: Ethereum Contract Unit Test
+          command: |
+            pipenv run pytest --cov=nucypher -v --runslow nucypher/tests/blockchain/eth/contracts/unit
+
+  intercontract_integration_tests-36:
+    working_directory: ~/nucypher-depends-36
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}
+      - run:
+          name: Ethereum Inter-Contract Integration Test
+          command: |
+            pipenv run pytest --cov=nucypher -v --runslow nucypher/tests/blockchain/eth/contracts/integration
+
