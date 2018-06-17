@@ -12,6 +12,20 @@ workflows:
       - intercontract_integration_tests:
           requires:
             - contract_unit_tests-36
+      - crypto_tests-36:
+        requires:
+            - build_dependencies-36
+      - network_tests-36:
+        requires:
+            - build_dependencies-36
+      - keystore_tests-36:
+        requires:
+            - build_dependencies-36
+      - character_tests-36:
+        requires:
+          - crypto_tests-36
+          - network_tests-36
+          - keystore_tests-36
 
 build_dependencies: &build_dependencies
   steps:
@@ -76,3 +90,63 @@ jobs:
           command: |
             pipenv run pytest --cov=nucypher -v --runslow tests/blockchain/eth/contracts/integration
 
+  crypto_tests-36:
+    working_directory: ~/nucypher-depends-36
+    docker:
+      - image: circleci/python:3.6
+        environment:
+          PY_DEP_VERSION: "py3.6"
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}-{{ .Environment.PY_DEP_VERSION }}
+      - run:
+          name: Crypto Character Tests
+          command: |
+            pipenv run pytest --cov=nucypher -v --runslow tests/crypto
+
+  network_tests-36:
+    working_directory: ~/nucypher-depends-36
+    docker:
+      - image: circleci/python:3.6
+        environment:
+          PY_DEP_VERSION: "py3.6"
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}-{{ .Environment.PY_DEP_VERSION }}
+      - run:
+          name: Network Tests
+          command: |
+            pipenv run pytest --cov=nucypher -v --runslow tests/network
+
+  keystore_tests-36:
+    working_directory: ~/nucypher-depends-36
+    docker:
+      - image: circleci/python:3.6
+        environment:
+          PY_DEP_VERSION: "py3.6"
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}-{{ .Environment.PY_DEP_VERSION }}
+      - run:
+          name: Keystore Tests
+          command: |
+            pipenv run pytest --cov=nucypher -v --runslow tests/keystore
+
+
+  character_tests-36:
+    working_directory: ~/nucypher-depends-36
+    docker:
+      - image: circleci/python:3.6
+        environment:
+          PY_DEP_VERSION: "py3.6"
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}-{{ .Environment.PY_DEP_VERSION }}
+      - run:
+          name: Character Tests
+          command: |
+            pipenv run pytest --cov=nucypher -v --runslow tests/characters
