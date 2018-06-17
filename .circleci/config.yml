@@ -30,6 +30,8 @@ workflows:
 build_dependencies: &build_dependencies
   steps:
     - checkout
+    - restore_cache:
+        key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}-{{ .Environment.PY_DEP_VERSION }}
     - run:
         name: Install Pipenv itself
         command: pip install pipenv --upgrade
