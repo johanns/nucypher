@@ -6,22 +6,22 @@ workflows:
     jobs:
       - build_dependencies-35
       - build_dependencies-36
-      - contract_unit_tests-36:
+      - contract_unit:
           requires:
             - build_dependencies-36
-      - intercontract_integration_tests:
+      - intercontract_integration:
           requires:
             - contract_unit_tests-36
-      - crypto_tests-36:
+      - crypto_unit:
           requires:
               - build_dependencies-36
-      - network_tests-36:
+      - network_unit:
           requires:
               - build_dependencies-36
-      - keystore_tests-36:
+      - keystore_unit:
           requires:
               - build_dependencies-36
-      - character_tests-36:
+      - character:
           requires:
               - crypto_tests-36
               - network_tests-36
@@ -64,7 +64,7 @@ jobs:
     docker:
       - image: circleci/python:3.6
 
-  contract_unit_tests-36:
+  contract_unit:
     parallelism: 4
     working_directory: ~/nucypher-depends-36
     docker:
@@ -96,7 +96,7 @@ jobs:
           command: |
             pipenv run pytest --cov=nucypher -v --runslow tests/blockchain/eth/contracts/unit/test_policy_manager.py
 
-  intercontract_integration_tests-36:
+  intercontract_integration:
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
@@ -111,7 +111,7 @@ jobs:
           command: |
             pipenv run pytest --cov=nucypher -v --runslow tests/blockchain/eth/contracts/integration
 
-  crypto_tests-36:
+  crypto_unit:
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
@@ -126,7 +126,7 @@ jobs:
           command: |
             pipenv run pytest --cov=nucypher -v --runslow tests/crypto
 
-  network_tests-36:
+  network_unit:
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
@@ -141,7 +141,7 @@ jobs:
           command: |
             pipenv run pytest --cov=nucypher -v --runslow tests/network
 
-  keystore_tests-36:
+  keystore_unit:
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
@@ -156,7 +156,7 @@ jobs:
           command: |
             pipenv run pytest --cov=nucypher -v --runslow tests/keystore
 
-  character_tests-36:
+  character:
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
