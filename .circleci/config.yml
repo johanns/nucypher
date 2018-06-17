@@ -13,19 +13,19 @@ workflows:
           requires:
             - contract_unit_tests-36
       - crypto_tests-36:
-        requires:
-            - build_dependencies-36
+          requires:
+              - build_dependencies-36
       - network_tests-36:
-        requires:
-            - build_dependencies-36
+          requires:
+              - build_dependencies-36
       - keystore_tests-36:
-        requires:
-            - build_dependencies-36
+          requires:
+              - build_dependencies-36
       - character_tests-36:
-        requires:
-          - crypto_tests-36
-          - network_tests-36
-          - keystore_tests-36
+          requires:
+              - crypto_tests-36
+              - network_tests-36
+              - keystore_tests-36
 
 build_dependencies: &build_dependencies
   steps:
@@ -134,7 +134,6 @@ jobs:
           name: Keystore Tests
           command: |
             pipenv run pytest --cov=nucypher -v --runslow tests/keystore
-
 
   character_tests-36:
     working_directory: ~/nucypher-depends-36
