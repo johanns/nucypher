@@ -4,14 +4,19 @@ workflows:
   version: 2
   test:
     jobs:
-      - build_dependencies-35
-      - build_dependencies-36
+      - checkout
+      - bundle_dependencies-35
+          requires:
+            - checkout
+      - bundle_dependencies-36
+          requires:
+            - checkout
       - contract_unit:
           requires:
             - build_dependencies-36
       - intercontract_integration:
           requires:
-            - contract_unit_tests-36
+            - contract_unit-36
       - crypto_unit:
           requires:
               - build_dependencies-36
@@ -23,11 +28,11 @@ workflows:
               - build_dependencies-36
       - character:
           requires:
-              - crypto_tests-36
-              - network_tests-36
-              - keystore_tests-36
+              - crypto_unit-36
+              - network_unit-36
+              - keystore_unit-36
 
-build_dependencies: &build_dependencies
+bundle_dependencies: &bundle_dependencies
   steps:
     - checkout
     - restore_cache:
@@ -52,14 +57,14 @@ build_dependencies: &build_dependencies
         key: deps-{{ .Branch }}-{{ checksum "Pipfile" }}-{{ .Environment.PY_DEP_VERSION }}
 
 jobs:
-  build_dependencies-35:
-    <<: *build_dependencies
+  bundle_dependencies-35:
+    <<: *bundle_dependencies
     working_directory: ~/nucypher-depends-35
     docker:
       - image: circleci/python:3.5
 
-  build_dependencies-36:
-    <<: *build_dependencies
+  bundle_dependencies-36:
+    <<: *bundle_dependencies
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
