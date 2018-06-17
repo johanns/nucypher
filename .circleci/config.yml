@@ -63,6 +63,7 @@ jobs:
       - image: circleci/python:3.6
 
   contract_unit_tests-36:
+    parallelism: 4
     working_directory: ~/nucypher-depends-36
     docker:
       - image: circleci/python:3.6
